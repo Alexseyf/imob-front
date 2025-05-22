@@ -6,11 +6,13 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/useAuthStore";
+import AgendarVisitaModal from "@/components/AgendarVisitaModal";
 
 export default function DetalhesImovel() {
   const params = useParams();
   const router = useRouter();
   const { isAuthenticated, checkAuth, userType } = useAuthStore();
+  const [showAgendarModal, setShowAgendarModal] = useState(false);
   
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -163,17 +165,16 @@ export default function DetalhesImovel() {
                 onClick={handleDelete}
               >
                 Excluir imóvel
-              </Button>
-            ) : (
+              </Button>            ) : (
               <Button 
                 variant="outline" 
                 className="w-1/2 bg-green-100" 
                 size="lg"
-                onClick={() => toast.info("Funcionalidade de agendamento em desenvolvimento")}
+                onClick={() => setShowAgendarModal(true)}
               >
                 Agendar uma visita
               </Button>
-            )          ) : (
+            )) : (
             <Button 
               variant="outline" 
               className="w-1/2 bg-green-100" 
@@ -192,9 +193,17 @@ export default function DetalhesImovel() {
             onClick={() => window.history.back()}
           >
             Voltar
-          </Button>
-        </div>
+          </Button>        </div>
       </div>
+      
+      {/* Modal de agendamento */}
+      {imovel && (
+        <AgendarVisitaModal 
+          isOpen={showAgendarModal} 
+          onClose={() => setShowAgendarModal(false)} 
+          imovelId={imovel.id} 
+        />
+      )}
     </div>
   );
 }
