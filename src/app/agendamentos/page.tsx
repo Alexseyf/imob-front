@@ -20,6 +20,12 @@ interface Imovel {
   valor: number;
 }
 
+interface Admin {
+  id: number;
+  nome: string;
+  email: string;
+}
+
 interface Agendamento {
   id: number;
   data: string;
@@ -31,13 +37,16 @@ interface Agendamento {
   updatedAt: string;
   imovel: Imovel;
   cliente: Cliente;
+  admin?: Admin;
 }
 
 export default function Agendamentos() {
   const router = useRouter();
   const { isAuthenticated, checkAuth, isAdmin } = useAuthStore();
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
+  const [todosAgendamentos, setTodosAgendamentos] = useState<Agendamento[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingTodosAgendamentos, setLoadingTodosAgendamentos] = useState(true);
   const [confirmingAgendamento, setConfirmingAgendamento] = useState<number | null>(null);
 
   useEffect(() => {
@@ -54,6 +63,7 @@ export default function Agendamentos() {
     }
     
     fetchAgendamentos();
+    fetchTodosAgendamentos();
   }, [isAuthenticated, isAdmin, checkAuth, router]);
 
   const fetchAgendamentos = async () => {
@@ -77,6 +87,30 @@ export default function Agendamentos() {
       toast.error('Erro ao carregar os dados dos agendamentos');
     } finally {
       setLoading(false);
+    }
+  };
+  
+  const fetchTodosAgendamentos = async () => {
+    try {
+      setLoadingTodosAgendamentos(true);
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/agendamentos/todos`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Falha ao carregar todos os agendamentos');
+      }
+
+      const data = await response.json();
+      setTodosAgendamentos(data);
+    } catch (error) {
+      console.error('Erro ao buscar todos os agendamentos:', error);
+      toast.error('Erro ao carregar todos os agendamentos');
+    } finally {
+      setLoadingTodosAgendamentos(false);
     }
   };
 
@@ -351,6 +385,112 @@ export default function Agendamentos() {
                   </table>
                 </div>
               )}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white shadow rounded-lg overflow-hidden mt-8">
+
+          {loadingTodosAgendamentos ? (
+            <div className="p-6 text-center">
+              <p>Carregando todos os agendamentos...</p>
+            </div>
+          ) : todosAgendamentos.length === 0 ? (
+            <div className="p-6 text-center">
+              <p>Nenhum agendamento encontrado no sistema.</p>
+            </div>
+          ) : (
+            <div className="overflow-hidden">
+              <div className="bg-blue-50 p-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-blue-800 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                  Lista Completa de Agendamentos
+                </h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Data/Hora
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Imóvel
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Cliente
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Responsável
+                      </th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {todosAgendamentos.map((agendamento) => (
+                      <tr key={agendamento.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">{formatDate(agendamento.data)}</div>
+                          <div className="text-xs text-gray-500 flex items-center">
+                            <span className="inline-block h-2 w-2 rounded-full bg-gray-400 mr-1"></span>
+                            Solicitado em {new Date(agendamento.createdAt).toLocaleDateString('pt-BR')}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center">
+                            {agendamento.imovel.foto && (
+                              <div className="flex-shrink-0 h-10 w-10 mr-4">
+                                <img className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" />
+                              </div>
+                            )}
+                            <div>
+                              <div className="text-sm font-medium text-gray-900">
+                                {agendamento.imovel.endereco}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {agendamento.imovel.bairro} - {formatCurrency(agendamento.imovel.valor)}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm font-medium text-gray-900">{agendamento.cliente.nome}</div>
+                          <div className="text-sm text-gray-500">{agendamento.cliente.email}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm font-medium text-gray-900">
+                            {agendamento.admin ? agendamento.admin.nome : 'Não atribuído'}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {agendamento.admin ? agendamento.admin.email : '-'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {agendamento.confirmado ? (
+                            <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                              </svg>
+                              Confirmado
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                              <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              Pendente
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>
