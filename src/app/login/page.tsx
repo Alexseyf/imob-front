@@ -51,13 +51,12 @@ export default function Login() {
         
         toast.success('Login realizado com sucesso');
 
-        // Verificar se existe um redirecionamento pendente
         const redirectPath = localStorage.getItem('redirectAfterLogin');
         
         if (redirectPath) {
-          // Limpar o redirecionamento pendente
+
           localStorage.removeItem('redirectAfterLogin');
-          // Redirecionar para a página anterior
+
           router.push(redirectPath);
         } else if (tipoUsuario.toUpperCase() === 'ADMIN') {
           router.push('/dashboard');

@@ -184,7 +184,7 @@ export default function DetalhesImovel() {
                 router.push('/login');
               }}
             >
-              Faça login para agendar
+              Faça login para agendar um visita
             </Button>          )}
           <Button
             variant="outline"
@@ -196,7 +196,6 @@ export default function DetalhesImovel() {
           </Button>        </div>
       </div>
       
-      {/* Modal de agendamento */}
       {imovel && (
         <AgendarVisitaModal 
           isOpen={showAgendarModal} 
