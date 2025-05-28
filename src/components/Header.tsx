@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,13 +13,13 @@ export function Header() {
 
   const handleLogout = () => {
     logout();
-    router.push('/');
+    router.push("/");
   };
-  
+
   const handleHomeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     resetImoveis();
-    router.push('/');
+    router.push("/");
   };
   return (
     <nav className="border-orange-200 bg-orange-50 dark:border-orange-700 shadow-md">
@@ -33,60 +33,114 @@ export function Header() {
             Imob
           </span>
         </button>
-          <div className="flex-grow max-w-md mx-4">
-          {(!isAuthenticated || userType === 'CLIENTE') && (
-            <InputPesquisa />
-          )}
+        <div className="flex-grow max-w-md mx-4">
+          {(!isAuthenticated || userType === "CLIENTE") && <InputPesquisa />}
         </div>
         <div className="hidden md:flex md:items-center md:w-auto">
           <div className="hidden w-full md:block md:w-auto">
-            <ul className="flex flex-col items-center font-medium mt-4 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700"><li>
+            <ul className="flex flex-col items-center font-medium mt-4 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700">
+              <li>
                 <button
                   onClick={handleHomeClick}
                   className="inline-flex items-center justify-center h-9 px-4 md:px-3 text-gray-900 font-medium transition-colors duration-200 hover:text-orange-600 hover:bg-orange-50 md:hover:bg-transparent rounded-md"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-1"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
                     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
                   </svg>
                   Home
                 </button>
-              </li>{isAuthenticated ? (
+              </li>
+              {isAuthenticated && userType === "CLIENTE" && (
+                <li>
+                  <Link
+                    href="/agendamentos"
+                    className="inline-flex items-center justify-center h-9 px-4 md:px-3 text-gray-900 font-medium transition-colors duration-200 hover:text-orange-600 hover:bg-orange-50 md:hover:bg-transparent rounded-md"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 mr-1"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Agendamentos
+                  </Link>
+                </li>
+              )}
+              {isAuthenticated ? (
                 <>
-                  {userType === 'ADMIN' && (                    <li>
-                      <Link 
+                  {userType === "ADMIN" && (
+                    <li>
+                      <Link
                         href="/dashboard"
                         className="inline-flex items-center justify-center h-9 px-4 md:px-3 text-gray-900 font-medium transition-colors duration-200 hover:text-orange-600 hover:bg-orange-50 md:hover:bg-transparent rounded-md"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 mr-1"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
                           <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                         </svg>
                         Dashboard
                       </Link>
                     </li>
-                  )}                  <li>
-                    <button 
+                  )}{" "}
+                  <li>
+                    <button
                       onClick={handleLogout}
                       className="inline-flex items-center justify-center h-9 px-4 md:px-3 text-gray-900 font-medium transition-colors duration-200 hover:text-red-600 hover:bg-red-50 md:hover:bg-transparent rounded-md"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H3zm11 3a1 1 0 10-2 0v4.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L14 10.586V6z" clipRule="evenodd" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5 mr-1"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H3zm11 3a1 1 0 10-2 0v4.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L14 10.586V6z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                       Sair
                     </button>
                   </li>
                 </>
-              ) : (                <li>
-                  <Link 
+              ) : (
+                <li>
+                  <Link
                     href="/login"
                     className="inline-flex items-center justify-center h-9 px-4 md:px-3 text-gray-900 font-medium transition-colors duration-200 hover:text-orange-600 hover:bg-orange-50 md:hover:bg-transparent rounded-md"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 mr-1"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                     Login
                   </Link>
                 </li>
-              )}            </ul>
+              )}{" "}
+            </ul>
           </div>
         </div>
       </div>

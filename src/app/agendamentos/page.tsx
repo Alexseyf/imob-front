@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { ClienteAgendamentos } from '@/components/ClienteAgendamentos';
 
 interface Cliente {
   id: number;
@@ -42,7 +43,7 @@ interface Agendamento {
 
 export default function Agendamentos() {
   const router = useRouter();
-  const { isAuthenticated, checkAuth, isAdmin } = useAuthStore();
+  const { isAuthenticated, checkAuth, isAdmin, userType } = useAuthStore();
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
   const [todosAgendamentos, setTodosAgendamentos] = useState<Agendamento[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,13 +58,10 @@ export default function Agendamentos() {
       return;
     }
     
-    if (!isAdmin()) {
-      router.push('/');
-      return;
+    if (isAdmin()) {
+      fetchAgendamentos();
+      fetchTodosAgendamentos();
     }
-    
-    fetchAgendamentos();
-    fetchTodosAgendamentos();
   }, [isAuthenticated, isAdmin, checkAuth, router]);
 
   const fetchAgendamentos = async () => {
@@ -84,7 +82,9 @@ export default function Agendamentos() {
       setAgendamentos(data);
     } catch (error) {
       console.error('Erro ao buscar agendamentos:', error);
-      toast.error('Erro ao carregar os dados dos agendamentos');
+      if (isAuthenticated) {
+        toast.error('Erro ao carregar os dados dos agendamentos');
+      }
     } finally {
       setLoading(false);
     }
@@ -108,7 +108,9 @@ export default function Agendamentos() {
       setTodosAgendamentos(data);
     } catch (error) {
       console.error('Erro ao buscar todos os agendamentos:', error);
-      toast.error('Erro ao carregar todos os agendamentos');
+      if (isAuthenticated) {
+        toast.error('Erro ao carregar todos os agendamentos');
+      }
     } finally {
       setLoadingTodosAgendamentos(false);
     }
@@ -166,32 +168,15 @@ export default function Agendamentos() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold text-gray-800">Meus Agendamentos</h2>
-              <div className="flex space-x-4">
-                <Button 
-                  onClick={() => fetchAgendamentos()}
-                  className="bg-orange-500 hover:bg-orange-600 text-white"
-                  size="sm"
-                >
-                  Atualizar Lista
-                </Button>
-                <Button 
-                  onClick={() => router.push('/dashboard')}
-                  variant="outline"
-                  className="bg-orange-50 hover:bg-orange-100"
-                >
-                  Voltar para Dashboard
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {loading ? (
+    <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">
+        {isAdmin() ? 'Gerenciamento de Agendamentos' : 'Meus Agendamentos'}
+      </h1>
+      
+      {isAdmin() ? (
+        <div className="space-y-8">
+          <div className="bg-white shadow rounded-lg overflow-hidden">
+            {loading ? (
             <div className="p-6 text-center">
               <p>Carregando dados dos agendamentos...</p>
             </div>
@@ -495,6 +480,9 @@ export default function Agendamentos() {
           )}
         </div>
       </div>
+      ) : (
+        <ClienteAgendamentos />
+      )}
     </div>
   );
 }
