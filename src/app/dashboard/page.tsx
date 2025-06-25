@@ -1,30 +1,50 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
 import RegisterModal from "@/components/RegisterModal";
+import PieGraph from "@/components/PieGraph";
 
 export default function Dashboard() {
   const router = useRouter();
-  const { isAuthenticated, checkAuth } = useAuthStore();
-  const isAdmin = useAuthStore((state) => state.isAdmin);
+  const { isAuthenticated, checkAuth, isAdmin, isSuporte } = useAuthStore();
   const [modalAdminOpen, setModalAdminOpen] = useState(false);
+  const [clientReady, setClientReady] = useState(false);
+  
+  const checkAuthRef = useRef(checkAuth);
+  const isAdminRef = useRef(isAdmin);
+  const isSuporteRef = useRef(isSuporte);
 
   useEffect(() => {
-    checkAuth();
+    checkAuthRef.current = checkAuth;
+    isAdminRef.current = isAdmin;
+    isSuporteRef.current = isSuporte;
+  }, [checkAuth, isAdmin, isSuporte]);
+
+  useEffect(() => {
+    setClientReady(true);
+  }, []);
+  
+  const checkUserAccess = useCallback(() => {
+    if (!isAdminRef.current() && !isSuporteRef.current()) {
+      router.push("/");
+      return false;
+    }
+    return true;
+  }, [router]);
+
+  useEffect(() => {
+    checkAuthRef.current();
 
     if (!isAuthenticated) {
       router.push("/login");
       return;
     }
 
-    if (!isAdmin()) {
-      router.push("/");
-      return;
-    }
-  }, [isAuthenticated, isAdmin, checkAuth, router]);
+    checkUserAccess();
+  }, [isAuthenticated, router, checkUserAccess]);
 
   const handleNavigation = (path: string) => {
     router.push(path);
@@ -63,7 +83,6 @@ export default function Dashboard() {
               Gerenciar imóveis cadastrados
             </p>
           </button>
-
           <button
             onClick={() => handleNavigation("/clientes")}
             className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col items-center"
@@ -89,7 +108,6 @@ export default function Dashboard() {
               Gerenciar clientes cadastrados
             </p>
           </button>
-
           <button
             onClick={() => handleNavigation("/agendamentos")}
             className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col items-center"
@@ -118,64 +136,88 @@ export default function Dashboard() {
             </p>
           </button>
 
+          {/* Renderizar apenas no cliente */}
+          {clientReady && isSuporteRef.current() && (
             <button
-            onClick={() => handleNotImplementedPage("/agendamentos")}
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col items-center"
+              onClick={() => handleNotImplementedPage("/agendamentos")}
+              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col items-center"
             >
-            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-              <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 text-orange-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 12l2-2m0 0l7-7 7 7m-9 8h4m-2-2v4M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
-              />
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold text-gray-800">
-              Cadastrar imóvel
-            </h2>
-            <p className="text-gray-600 mt-2 text-center">
-              Gerenciar cadastro de imóveis
-            </p>
-            </button>            <button
-            onClick={() => setModalAdminOpen(true)}
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col items-center"
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-8 w-8 text-orange-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 12l2-2m0 0l7-7 7 7m-9 8h4m-2-2v4M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Cadastrar imóvel
+              </h2>
+              <p className="text-gray-600 mt-2 text-center">
+                Gerenciar cadastro de imóveis
+              </p>
+            </button>
+          )}
+          
+
+          {clientReady && isAdminRef.current() && (
+            <button
+              onClick={() => setModalAdminOpen(true)}
+              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col items-center"
             >
-            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-              <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-8 w-8 text-orange-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm6 2v2m0 0h2m-2 0h-2"
-              />
-              </svg>
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-8 w-8 text-orange-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm6 2v2m0 0h2m-2 0h-2"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Cadastrar administrador
+              </h2>
+              <p className="text-gray-600 mt-2 text-center">
+                Gerenciar cadastro de usuários
+              </p>
+            </button>
+          )}
+        </div>
+        {clientReady && isSuporteRef.current() && (
+          <div className="col-span-1 md:col-span-3 mt-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Análise de Dados</h2>
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <h3 className="text-lg font-medium text-gray-700 mb-2">Distribuição de Imóveis por Bairro</h3>
+              <p className="text-gray-600 mb-4">
+                Este gráfico mostra a distribuição de imóveis ativos por bairro, 
+                ajudando a identificar as áreas com maior concentração de propriedades.
+              </p>
+              <div suppressHydrationWarning>
+                <PieGraph />
+              </div>
             </div>
-            <h2 className="text-xl font-semibold text-gray-800">
-              Cadastrar administrador
-            </h2>
-            <p className="text-gray-600 mt-2 text-center">
-              Gerenciar cadastro de usuários
-            </p>
-            </button>        </div>
+          </div>
+        )}
       </div>
 
-      <RegisterModal 
-        isOpen={modalAdminOpen} 
-        onClose={() => setModalAdminOpen(false)} 
+      <RegisterModal
+        isOpen={modalAdminOpen}
+        onClose={() => setModalAdminOpen(false)}
         tipoUsuario="ADMIN"
       />
     </div>

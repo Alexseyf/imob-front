@@ -1,12 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
-// Interface para os dados do cliente
 interface Imovel {
   id: number;
   endereco: string;
@@ -18,7 +17,7 @@ interface Agendamento {
   data: string;
   confirmado: boolean;
   imovel: Imovel;
-  adminId: number; // ID do admin responsável pelo agendamento
+  adminId: number;
 }
 
 interface Cliente {
@@ -39,9 +38,16 @@ export default function Clientes() {
   const [loading, setLoading] = useState(true);
   const [expandedCliente, setExpandedCliente] = useState<number | null>(null);
   const [confirmingAgendamento, setConfirmingAgendamento] = useState<number | null>(null);
+  const checkAuthRef = useRef(checkAuth);
+  const isAdminRef = useRef(isAdmin);
 
   useEffect(() => {
-    checkAuth();
+    checkAuthRef.current = checkAuth;
+    isAdminRef.current = isAdmin;
+  }, [checkAuth, isAdmin]);
+
+  useEffect(() => {
+    checkAuthRef.current();
 
     if (!isAuthenticated) {
       router.push('/login');
@@ -117,7 +123,6 @@ export default function Clientes() {
         throw new Error(data.erro || 'Falha ao confirmar agendamento');
       }
       
-      // Atualizar o estado dos clientes com o agendamento confirmado
       setClientes(clientes.map(cliente => {
         return {
           ...cliente,

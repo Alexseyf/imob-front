@@ -2,18 +2,33 @@
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { useImoveisStore } from "@/store/useImoveisStore";
-import { useEffect } from "react";
+import { useEffect, useCallback, useRef, useState } from "react";
 
 export function StoreInitializer() {
   const checkAuth = useAuthStore(state => state.checkAuth);
   const fetchImoveis = useImoveisStore(state => state.fetchImoveis);
+  const [isMounted, setIsMounted] = useState(false);
+
+  const checkAuthRef = useRef(checkAuth);
+  const fetchImoveisRef = useRef(fetchImoveis);
+  
+  useEffect(() => {
+    checkAuthRef.current = checkAuth;
+    fetchImoveisRef.current = fetchImoveis;
+  }, [checkAuth, fetchImoveis]);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
-    checkAuth();
-    fetchImoveis();
+    if (!isMounted) return;
+    
+    checkAuthRef.current();
+    fetchImoveisRef.current();
 
     const handleFocus = () => {
-      checkAuth();
+      checkAuthRef.current();
     };
     
     window.addEventListener('focus', handleFocus);
@@ -21,7 +36,7 @@ export function StoreInitializer() {
     return () => {
       window.removeEventListener('focus', handleFocus);
     };
-  }, [checkAuth, fetchImoveis]);
+  }, [isMounted]);
 
   return null;
 }

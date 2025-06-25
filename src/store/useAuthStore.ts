@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-type UserType = 'ADMIN' | 'CLIENTE' | '';
+type UserType = 'ADMIN' | 'CLIENTE' | 'SUPORTE' | '';
 
 interface AuthStore {
   isAuthenticated: boolean;
@@ -17,6 +17,7 @@ interface AuthStore {
   checkAuth: () => void;
   logout: () => void;
   isAdmin: () => boolean;
+  isSuporte: () => boolean;
 }
 
 const normalizeUserType = (type: string): UserType => {
@@ -25,9 +26,18 @@ const normalizeUserType = (type: string): UserType => {
   const normalized = type.trim().toUpperCase();
   if (normalized === 'ADMIN') return 'ADMIN';
   if (normalized === 'CLIENTE') return 'CLIENTE';
+  if (normalized === 'SUPORTE') return 'SUPORTE';
   
   return 'CLIENTE';
 };
+
+function checkIsAdmin(userType: UserType): boolean {
+  return userType === 'ADMIN';
+}
+
+function checkIsSuporte(userType: UserType): boolean {
+  return userType === 'SUPORTE';
+}
 
 export const useAuthStore = create<AuthStore>()(
   persist(
@@ -46,7 +56,11 @@ export const useAuthStore = create<AuthStore>()(
       },
       
       isAdmin: () => {
-        return get().userType === 'ADMIN';
+        return checkIsAdmin(get().userType);
+      },
+      
+      isSuporte: () => {
+        return checkIsSuporte(get().userType);
       },
       
       checkAuth: () => {
@@ -55,13 +69,24 @@ export const useAuthStore = create<AuthStore>()(
           const userName = localStorage.getItem('userName') || '';
           const userEmail = localStorage.getItem('email') || '';
           const userType = localStorage.getItem('userType') || '';
+          
+          const isCurrentlyAuthenticated = !!token;
+          const currentUserType = normalizeUserType(userType);
 
-          set({ 
-            isAuthenticated: !!token,
-            userName,
-            userEmail,
-            userType: normalizeUserType(userType)
-          });
+          const currentState = get();
+          if (
+            currentState.isAuthenticated !== isCurrentlyAuthenticated ||
+            currentState.userName !== userName ||
+            currentState.userEmail !== userEmail ||
+            currentState.userType !== currentUserType
+          ) {
+            set({ 
+              isAuthenticated: isCurrentlyAuthenticated,
+              userName,
+              userEmail,
+              userType: currentUserType
+            });
+          }
         }
       },
       

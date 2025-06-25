@@ -2,7 +2,7 @@
 
 import { ImovelItf } from "@/utils/ImovelItf";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -14,10 +14,16 @@ export default function DetalhesImovel() {
   const { isAuthenticated, checkAuth, userType } = useAuthStore();
   const [showAgendarModal, setShowAgendarModal] = useState(false);
   
+  const checkAuthRef = useRef(checkAuth);
+
+  useEffect(() => {
+    checkAuthRef.current = checkAuth;
+  }, [checkAuth]);
+  
   useEffect(() => {
     window.scrollTo(0, 0);
-    checkAuth();
-  }, [checkAuth]);
+    checkAuthRef.current();
+  }, []);
   
   const [imovel, setImovel] = useState<ImovelItf>();
   const [loading, setLoading] = useState(true);

@@ -15,6 +15,7 @@ export default function Login() {
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const router = useRouter();
   const { setIsAuthenticated, setUserName, setUserEmail, setUserType } = useAuthStore();
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -26,9 +27,13 @@ export default function Login() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, senha }),
-      });      if (!response.ok) {
+      });
+      
+      if (!response.ok) {
         throw new Error('Falha ao logar');
-      }      const data = await response.json();
+      }
+      
+      const data = await response.json();
       
       if (data.token) {
         localStorage.setItem('token', data.token);
@@ -47,7 +52,8 @@ export default function Login() {
 
         const tipoUsuario = data.usuarioTipo || 'CLIENTE'; 
         localStorage.setItem('userType', tipoUsuario);
-        setUserType(tipoUsuario);        setIsAuthenticated(true);
+        setUserType(tipoUsuario);
+        setIsAuthenticated(true);
         
         toast.success('Login realizado com sucesso');
 
@@ -58,7 +64,7 @@ export default function Login() {
           localStorage.removeItem('redirectAfterLogin');
 
           router.push(redirectPath);
-        } else if (tipoUsuario.toUpperCase() === 'ADMIN') {
+        } else if (tipoUsuario.toUpperCase() === 'ADMIN' || tipoUsuario.toUpperCase() === 'SUPORTE') {
           router.push('/dashboard');
         } else {
           router.push('/');
@@ -128,7 +134,8 @@ export default function Login() {
             Esqueceu sua senha?
           </button>
         </div>
-      </form>      <div className="mt-4 text-center">
+      </form>
+      <div className="mt-4 text-center">
         <p className="text-sm text-gray-600">
           Não possui conta?{" "}
           <button

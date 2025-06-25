@@ -5,11 +5,17 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/useAuthStore";
 import { InputPesquisa } from "@/components/InputPesquisa";
 import { useImoveisStore } from "@/store/useImoveisStore";
+import { useState, useEffect } from "react";
 
 export function Header() {
   const router = useRouter();
   const { isAuthenticated, logout, userType } = useAuthStore();
   const { resetImoveis } = useImoveisStore();
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -34,7 +40,7 @@ export function Header() {
           </span>
         </button>
         <div className="flex-grow max-w-md mx-4">
-          {(!isAuthenticated || userType === "CLIENTE") && <InputPesquisa />}
+          {isMounted && (!isAuthenticated || userType === "CLIENTE") && <InputPesquisa />}
         </div>
         <div className="hidden md:flex md:items-center md:w-auto">
           <div className="hidden w-full md:block md:w-auto">
@@ -55,7 +61,7 @@ export function Header() {
                   Home
                 </button>
               </li>
-              {isAuthenticated && userType === "CLIENTE" && (
+              {isMounted && isAuthenticated && userType === "CLIENTE" && (
                 <li>
                   <Link
                     href="/agendamentos"
@@ -77,9 +83,10 @@ export function Header() {
                   </Link>
                 </li>
               )}
-              {isAuthenticated ? (
+              {isMounted ? (
+                isAuthenticated ? (
                 <>
-                  {userType === "ADMIN" && (
+                  {(userType === "ADMIN" || userType === "SUPORTE") && (
                     <li>
                       <Link
                         href="/dashboard"
@@ -139,7 +146,7 @@ export function Header() {
                     Login
                   </Link>
                 </li>
-              )}{" "}
+              )) : null}{" "}
             </ul>
           </div>
         </div>

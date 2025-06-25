@@ -16,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br">
-      <body>
+    <html lang="pt-br" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <StoreInitializer />
         <Header />
         {children}
