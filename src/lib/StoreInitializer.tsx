@@ -2,7 +2,7 @@
 
 import { useAuthStore } from "@/store/useAuthStore";
 import { useImoveisStore } from "@/store/useImoveisStore";
-import { useEffect, useCallback, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function StoreInitializer() {
   const checkAuth = useAuthStore(state => state.checkAuth);

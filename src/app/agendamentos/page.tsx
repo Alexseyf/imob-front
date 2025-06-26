@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { ClienteAgendamentos } from '@/components/ClienteAgendamentos';
+import Image from 'next/image';
 
 interface Cliente {
   id: number;
@@ -43,7 +44,7 @@ interface Agendamento {
 
 export default function Agendamentos() {
   const router = useRouter();
-  const { isAuthenticated, checkAuth, isAdmin, userType } = useAuthStore();
+  const { isAuthenticated, checkAuth, isAdmin} = useAuthStore();
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
   const [todosAgendamentos, setTodosAgendamentos] = useState<Agendamento[]>([]);
   const [loading, setLoading] = useState(true);
@@ -245,7 +246,7 @@ export default function Agendamentos() {
                             <div className="flex items-center">
                               {agendamento.imovel.foto && (
                                 <div className="flex-shrink-0 h-10 w-10 mr-4">
-                                  <img className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" />
+                                  <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" />
                                 </div>
                               )}
                               <div>
@@ -338,7 +339,7 @@ export default function Agendamentos() {
                             <div className="flex items-center">
                               {agendamento.imovel.foto && (
                                 <div className="flex-shrink-0 h-10 w-10 mr-4">
-                                  <img className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" />
+                                  <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" />
                                 </div>
                               )}
                               <div>
@@ -437,7 +438,7 @@ export default function Agendamentos() {
                           <div className="flex items-center">
                             {agendamento.imovel.foto && (
                               <div className="flex-shrink-0 h-10 w-10 mr-4">
-                                <img className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" />
+                                <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" />
                               </div>
                             )}
                             <div>

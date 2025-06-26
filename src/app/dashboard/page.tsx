@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { toast } from "sonner";
 import RegisterModal from "@/components/RegisterModal";
 import PieGraph from "@/components/PieGraph";
 import PieChart from "@/components/PieChart";
@@ -51,10 +50,6 @@ export default function Dashboard() {
 
   const handleNavigation = (path: string) => {
     router.push(path);
-  };
-
-  const handleNotImplementedPage = (path: string) => {
-    toast.error("Página não implementada em desenvolvimento");
   };
 
   return (

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/useAuthStore";
 import AgendarVisitaModal from "@/components/AgendarVisitaModal";
+import Image from "next/image";
 
 export default function DetalhesImovel() {
   const params = useParams();
@@ -96,7 +97,7 @@ export default function DetalhesImovel() {
         {imovel ? (
           <div className="flex flex-col md:flex-row">
             <div className="md:w:10/12">
-              <img
+              <Image
                 className="rounded-lg w-full h-120 object-cover mb-4 md:mb-0"
                 src={imovel.foto || "/placeholder.svg"}
                 alt="imagem do imóvel"

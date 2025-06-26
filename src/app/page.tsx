@@ -1,8 +1,7 @@
 "use client";
 import { CardImovel } from "@/components/CardImovel";
 import CarouselTop5 from "@/components/carousel-top5";
-import { ImovelItf } from "@/utils/ImovelItf";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useImoveisStore } from "@/store/useImoveisStore";
 
