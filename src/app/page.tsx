@@ -32,7 +32,9 @@ export default function Home() {
         <div className={`grid ${
           userType === 'ADMIN' 
             ? 'grid-cols-1' 
-            : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+            : userType === 'SUPORTE'
+              ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3'
+              : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
           } gap-4 p-4 w-4/5 mx-auto`}
         >
           {listaImoveis}

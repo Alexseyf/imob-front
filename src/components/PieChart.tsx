@@ -3,22 +3,28 @@
 import React, { useEffect, useState } from 'react'
 import {
   VictoryPie,
+  VictoryLabel,
   VictoryTheme,
-  VictoryTooltip,
   VictoryLegend
-} from "victory"; 
+} from "victory";
 import { useAuthStore } from '@/store/useAuthStore';
 
-interface ImoveisPorBairro {
-  bairro: string;
-  total_imoveis: number;
+interface AdminAgendamentos {
+  id: string;
+  nome: string;
+  agendamentos: {
+    confirmados: number;
+    naoConfirmados: number;
+    total: number;
+  };
 }
 
-const PieGraph = () => {
-  const [imoveisPorBairro, setImoveisPorBairro] = useState<ImoveisPorBairro[]>([]);
+const PieChart = () => {
+  const [adminData, setAdminData] = useState<AdminAgendamentos[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [selectedAdmin, setSelectedAdmin] = useState<AdminAgendamentos | null>(null);
   const isSuporte = useAuthStore(state => state.isSuporte);
   
   useEffect(() => {
@@ -46,7 +52,7 @@ const PieGraph = () => {
           return;
         }
         
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/suporte/imoveis-por-bairro`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/suporte/admins-agendamentos`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'X-User-Type': userType || ''
@@ -60,11 +66,15 @@ const PieGraph = () => {
         }
         
         if (!response.ok) {
-          throw new Error('Falha ao buscar dados de imóveis por bairro');
+          throw new Error('Falha ao buscar dados de agendamentos por admin');
         }
         
         const data = await response.json();
-        setImoveisPorBairro(data);
+        setAdminData(data);
+
+        if (data && data.length > 0) {
+          setSelectedAdmin(data[0]);
+        }
       } catch (err) {
         setError('Não foi possível carregar os dados do gráfico');
       } finally {
@@ -109,7 +119,7 @@ const PieGraph = () => {
     );
   }
 
-  if (imoveisPorBairro.length === 0) {
+  if (adminData.length === 0 || !selectedAdmin) {
     return (
       <div className="bg-white p-6 rounded-lg shadow-md h-64">
         <div className="text-gray-500 text-center h-full flex items-center justify-center flex-col">
@@ -122,53 +132,73 @@ const PieGraph = () => {
     );
   }
 
-  const chartData = imoveisPorBairro.map(item => ({
-    x: item.bairro,
-    y: Number(item.total_imoveis),
-    label: `${item.bairro}: ${item.total_imoveis}`
-  }));
-
-  // cores bairros
-  const colorScale = [
-    "#FF5252", "#7C4DFF", "#64FFDA", "#FFFF00",
-    "#FF6E40", "#FF4081", "#E040FB", "#536DFE",
-    "#448AFF", "#40C4FF", "#18FFFF",  
+  const pieData = [
+    { x: "Confirmados", y: selectedAdmin.agendamentos.confirmados },
+    { x: "Não Confirmados", y: selectedAdmin.agendamentos.naoConfirmados },
   ];
 
-  // legendas
-  const legendData = imoveisPorBairro.map((item, index) => ({
-    name: `${item.bairro}: ${item.total_imoveis}`,
-    symbol: { fill: colorScale[index % colorScale.length] }
-  }));
+  const colorScale = ["#4CAF50", "#FF5252"];
+
+  const AdminSelector = () => (
+    <div className="mb-4 max-w-xs mx-auto relative z-10">
+      <label htmlFor="admin-select" className="block text-sm font-medium text-gray-700 mb-1">
+        Selecionar Corretor:
+      </label>
+      <select
+        id="admin-select"
+        className="block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 appearance-auto"
+        value={selectedAdmin.id}
+        onChange={(e) => {
+          const selected = adminData.find(admin => admin.id === e.target.value);
+          if (selected) setSelectedAdmin(selected);
+        }}
+      >
+        {adminData.map(admin => (
+          <option key={admin.id} value={admin.id}>
+            {admin.nome}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 
   return (
     <div className="h-[420px] overflow-visible">
+      <AdminSelector />
+      
       <div className="relative h-[calc(100%-80px)]">
-        <VictoryPie
-          data={chartData}
-          theme={VictoryTheme.material}
-          colorScale={colorScale}
-          innerRadius={60}
-          labelComponent={
-            <VictoryTooltip 
-              style={{ fontSize: 12 }} 
-              flyoutStyle={{ stroke: "gray", strokeWidth: 1, fill: "white" }}
-            />
-          }
-          style={{
-            data: {
-              fillOpacity: 0.9,
-              stroke: "white",
-              strokeWidth: 2
-            },
-            labels: {
-              fill: "#333"
-            }
-          }}
-          animate={{
-            duration: 1000
-          }}
-        />
+        <svg viewBox="0 0 400 400" className="w-full h-full">
+          <VictoryPie
+            standalone={false}
+            width={400}
+            height={400}
+            data={pieData}
+            innerRadius={68}
+            labelRadius={90}
+            theme={VictoryTheme.material}
+            colorScale={colorScale}
+            style={{
+              data: {
+                fillOpacity: 0.9,
+                stroke: "white",
+                strokeWidth: 2
+              },
+              labels: {
+                fontSize: 0
+              }
+            }}
+            animate={{
+              duration: 1000
+            }}
+          />
+          <VictoryLabel
+            textAnchor="middle"
+            style={{ fontSize: 18 }}
+            x={200}
+            y={200}
+            text={(selectedAdmin.nome || "").split(" ").slice(0, 1).join(" ") + "\n" + (selectedAdmin.nome || "").split(" ").slice(1).join(" ")}
+          />
+        </svg>
       </div>
       
       <div>
@@ -183,11 +213,14 @@ const PieGraph = () => {
             title: { fontSize: 14 },
             labels: { fontSize: 5 }
           }}
-          data={legendData}
+          data={[
+            { name: `Confirmados: ${selectedAdmin.agendamentos.confirmados}`, symbol: { fill: colorScale[0] } },
+            { name: `Não Confirmados: ${selectedAdmin.agendamentos.naoConfirmados}`, symbol: { fill: colorScale[1] } }
+          ]}
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PieGraph
+export default PieChart;

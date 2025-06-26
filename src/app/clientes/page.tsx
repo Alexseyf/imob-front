@@ -33,18 +33,20 @@ interface Cliente {
 
 export default function Clientes() {
   const router = useRouter();
-  const { isAuthenticated, checkAuth, isAdmin } = useAuthStore();
+  const { isAuthenticated, checkAuth, isAdmin, isSuporte } = useAuthStore();
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedCliente, setExpandedCliente] = useState<number | null>(null);
   const [confirmingAgendamento, setConfirmingAgendamento] = useState<number | null>(null);
   const checkAuthRef = useRef(checkAuth);
   const isAdminRef = useRef(isAdmin);
+  const isSuporteRef = useRef(isSuporte);
 
   useEffect(() => {
     checkAuthRef.current = checkAuth;
     isAdminRef.current = isAdmin;
-  }, [checkAuth, isAdmin]);
+    isSuporteRef.current = isSuporte;
+  }, [checkAuth, isAdmin, isSuporte]);
 
   useEffect(() => {
     checkAuthRef.current();
@@ -54,21 +56,28 @@ export default function Clientes() {
       return;
     }
     
-    if (!isAdmin()) {
+    if (!isAdminRef.current() && !isSuporteRef.current()) {
       router.push('/');
       return;
     }
     
     fetchClientes();
-  }, [isAuthenticated, isAdmin, checkAuth, router]);
+  }, [isAuthenticated, router]);
 
   const fetchClientes = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admins/clientes`, {
+      const userType = localStorage.getItem('userType');
+      
+      const endpoint = isAdminRef.current() 
+        ? `${process.env.NEXT_PUBLIC_API_URL}/admins/clientes` 
+        : `${process.env.NEXT_PUBLIC_API_URL}/suporte/clientes`;
+      
+      const response = await fetch(endpoint, {
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'X-User-Type': userType || ''
         }
       });
 
@@ -105,12 +114,14 @@ export default function Clientes() {
     try {
       setConfirmingAgendamento(agendamentoId);
       const token = localStorage.getItem('token');
+      const userType = localStorage.getItem('userType');
       
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/agendamentos/confirmar`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`,
+          'X-User-Type': userType || ''
         },
         body: JSON.stringify({
           agendamentoId: agendamentoId

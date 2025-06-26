@@ -6,11 +6,14 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
 import RegisterModal from "@/components/RegisterModal";
 import PieGraph from "@/components/PieGraph";
+import PieChart from "@/components/PieChart";
+import CadastrarImovelModal from "@/components/CadastrarImovelModal";
 
 export default function Dashboard() {
   const router = useRouter();
   const { isAuthenticated, checkAuth, isAdmin, isSuporte } = useAuthStore();
   const [modalAdminOpen, setModalAdminOpen] = useState(false);
+  const [modalImovelOpen, setModalImovelOpen] = useState(false);
   const [clientReady, setClientReady] = useState(false);
   
   const checkAuthRef = useRef(checkAuth);
@@ -83,6 +86,7 @@ export default function Dashboard() {
               Gerenciar imóveis cadastrados
             </p>
           </button>
+
           <button
             onClick={() => handleNavigation("/clientes")}
             className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col items-center"
@@ -108,38 +112,40 @@ export default function Dashboard() {
               Gerenciar clientes cadastrados
             </p>
           </button>
-          <button
-            onClick={() => handleNavigation("/agendamentos")}
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col items-center"
-          >
-            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 text-orange-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold text-gray-800">
-              Agendamentos
-            </h2>
-            <p className="text-gray-600 mt-2 text-center">
-              Gerenciar agendamentos de visitas
-            </p>
-          </button>
 
-          {/* Renderizar apenas no cliente */}
+          {clientReady && !isSuporteRef.current() && (
+            <button
+              onClick={() => handleNavigation("/agendamentos")}
+              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col items-center"
+            >
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-8 w-8 text-orange-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Agendamentos
+              </h2>
+              <p className="text-gray-600 mt-2 text-center">
+                Gerenciar agendamentos de visitas
+              </p>
+            </button>
+          )}
+
           {clientReady && isSuporteRef.current() && (
             <button
-              onClick={() => handleNotImplementedPage("/agendamentos")}
+              onClick={() => setModalImovelOpen(true)}
               className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow flex flex-col items-center"
             >
               <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
@@ -201,14 +207,27 @@ export default function Dashboard() {
         {clientReady && isSuporteRef.current() && (
           <div className="col-span-1 md:col-span-3 mt-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-4">Análise de Dados</h2>
-            <div className="bg-white p-4 rounded-lg shadow-md">
-              <h3 className="text-lg font-medium text-gray-700 mb-2">Distribuição de Imóveis por Bairro</h3>
-              <p className="text-gray-600 mb-4">
-                Este gráfico mostra a distribuição de imóveis ativos por bairro, 
-                ajudando a identificar as áreas com maior concentração de propriedades.
-              </p>
-              <div suppressHydrationWarning>
-                <PieGraph />
+            <div className="grid grid-cols-1 gap-8">
+              <div className="bg-white p-6 rounded-lg shadow-md flex flex-col overflow-visible">
+                <h3 className="text-lg font-medium text-gray-700 mb-2">Distribuição de Imóveis por Bairro</h3>
+                <p className="text-gray-600 mb-4">
+                  Este gráfico mostra a distribuição de imóveis ativos por bairro, 
+                  ajudando a identificar as áreas com maior concentração de propriedades.
+                </p>
+                <div suppressHydrationWarning className="overflow-visible">
+                  <PieGraph />
+                </div>
+              </div>
+              
+              <div className="bg-white p-6 rounded-lg shadow-md flex flex-col overflow-visible">
+                <h3 className="text-lg font-medium text-gray-700 mb-2">Agendamentos por Corretor</h3>
+                <p className="text-gray-600 mb-4">
+                  Este gráfico mostra a distribuição de agendamentos confirmados e não confirmados 
+                  por corretor, ajudando a monitorar a performance da equipe.
+                </p>
+                <div suppressHydrationWarning className="overflow-visible">
+                  <PieChart />
+                </div>
               </div>
             </div>
           </div>
@@ -219,6 +238,11 @@ export default function Dashboard() {
         isOpen={modalAdminOpen}
         onClose={() => setModalAdminOpen(false)}
         tipoUsuario="ADMIN"
+      />
+
+      <CadastrarImovelModal
+        isOpen={modalImovelOpen}
+        onClose={() => setModalImovelOpen(false)}
       />
     </div>
   );
