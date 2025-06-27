@@ -30,17 +30,19 @@ export function Header() {
   };
   return (
     <nav className="border-orange-200 bg-orange-50 dark:border-orange-700 shadow-md">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        <button
-          onClick={handleHomeClick}
-          className="flex items-center justify-center space-x-3 rtl:space-x-reverse transition-transform duration-200 hover:scale-105"
-        >
-          <img src="/logo.png" className="h-10" alt="Logo Imob" />
-          <span className="text-2xl font-semibold whitespace-nowrap text-orange-600">
-            Imob
-          </span>
-        </button>
-        <div className="flex md:hidden">
+      <div className="max-w-screen-xl flex items-center justify-between mx-auto p-4">
+        <div className="flex items-center flex-1 min-w-0">
+          <button
+            onClick={handleHomeClick}
+            className="flex items-center justify-center space-x-3 rtl:space-x-reverse transition-transform duration-200 hover:scale-105 min-w-0"
+          >
+            <img src="/logo.png" className="h-10" alt="Logo Imob" />
+            <span className="text-2xl font-semibold whitespace-nowrap text-orange-600 truncate">
+              Imob
+            </span>
+          </button>
+        </div>
+        <div className="flex md:hidden flex-shrink-0 ml-2">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="inline-flex items-center justify-center p-2 rounded-md text-orange-600 hover:bg-orange-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -51,7 +53,7 @@ export function Header() {
             </svg>
           </button>
         </div>
-        <div className="flex-grow max-w-md mx-4">
+        <div className="flex-grow max-w-md mx-4 hidden md:block">
           {isMounted && (!isAuthenticated || userType === "CLIENTE") && <InputPesquisa />}
         </div>
         <div className="hidden md:flex md:items-center md:w-auto">
