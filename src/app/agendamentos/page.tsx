@@ -218,81 +218,123 @@ export default function Agendamentos() {
                   <p className="mt-2 text-gray-500">Não há agendamentos pendentes no momento</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Data/Hora
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Imóvel
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Cliente
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Ações
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {agendamentos.filter(a => !a.confirmado).map((agendamento) => (
-                        <tr key={agendamento.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">{formatDate(agendamento.data)}</div>
-                            <div className="text-xs text-gray-500 flex items-center">
-                              <span className="inline-block h-2 w-2 rounded-full bg-yellow-400 mr-1"></span>
-                              Solicitado em {new Date(agendamento.createdAt).toLocaleDateString('pt-BR')}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center">
-                              {agendamento.imovel.foto && (
-                                <div className="flex-shrink-0 h-10 w-10 mr-4">
-                                  <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" width={40} height={40} />
-                                </div>
-                              )}
-                              <div>
-                                <div className="text-sm font-medium text-gray-900">
-                                  {agendamento.imovel.endereco}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {agendamento.imovel.bairro} - {formatCurrency(agendamento.imovel.valor)}
+                <>
+                  <div className="md:hidden space-y-4 p-2">
+                    {agendamentos.filter(a => !a.confirmado).map((agendamento) => (
+                      <div key={agendamento.id} className="bg-yellow-50 rounded-lg shadow p-4 flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="inline-block h-2 w-2 rounded-full bg-yellow-400 mr-1"></span>
+                          <span className="text-xs text-gray-500">Solicitado em {new Date(agendamento.createdAt).toLocaleDateString('pt-BR')}</span>
+                        </div>
+                        <div className="text-sm font-medium text-gray-900">{formatDate(agendamento.data)}</div>
+                        <div className="flex items-center gap-3">
+                          {agendamento.imovel.foto && (
+                            <Image className="h-12 w-12 rounded-md object-cover" src={agendamento.imovel.foto} alt="" width={48} height={48} />
+                          )}
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{agendamento.imovel.endereco}</div>
+                            <div className="text-xs text-gray-500">{agendamento.imovel.bairro} - {formatCurrency(agendamento.imovel.valor)}</div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{agendamento.cliente.nome}</div>
+                          <div className="text-xs text-gray-500">{agendamento.cliente.email}</div>
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Pendente
+                          </span>
+                          <Button
+                            onClick={() => confirmarAgendamento(agendamento.id)}
+                            disabled={confirmingAgendamento === agendamento.id}
+                            className="bg-green-600 hover:bg-green-700 text-white text-xs py-1 px-2 rounded"
+                            size="sm"
+                          >
+                            {confirmingAgendamento === agendamento.id ? 'Confirmando...' : 'Confirmar Visita'}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="hidden md:block overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Data/Hora
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Imóvel
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Cliente
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Ações
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {agendamentos.filter(a => !a.confirmado).map((agendamento) => (
+                          <tr key={agendamento.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm font-medium text-gray-900">{formatDate(agendamento.data)}</div>
+                              <div className="text-xs text-gray-500 flex items-center">
+                                <span className="inline-block h-2 w-2 rounded-full bg-yellow-400 mr-1"></span>
+                                Solicitado em {new Date(agendamento.createdAt).toLocaleDateString('pt-BR')}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center">
+                                {agendamento.imovel.foto && (
+                                  <div className="flex-shrink-0 h-10 w-10 mr-4">
+                                    <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" width={40} height={40} />
+                                  </div>
+                                )}
+                                <div>
+                                  <div className="text-sm font-medium text-gray-900">
+                                    {agendamento.imovel.endereco}
+                                  </div>
+                                  <div className="text-sm text-gray-500">
+                                    {agendamento.imovel.bairro} - {formatCurrency(agendamento.imovel.valor)}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="text-sm font-medium text-gray-900">{agendamento.cliente.nome}</div>
-                            <div className="text-sm text-gray-500">{agendamento.cliente.email}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                              <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                              Pendente
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <Button
-                              onClick={() => confirmarAgendamento(agendamento.id)}
-                              disabled={confirmingAgendamento === agendamento.id}
-                              className="bg-green-600 hover:bg-green-700 text-white text-xs py-1 px-2 rounded"
-                              size="sm"
-                            >
-                              {confirmingAgendamento === agendamento.id ? 'Confirmando...' : 'Confirmar Visita'}
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm font-medium text-gray-900">{agendamento.cliente.nome}</div>
+                              <div className="text-sm text-gray-500">{agendamento.cliente.email}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Pendente
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm">
+                              <Button
+                                onClick={() => confirmarAgendamento(agendamento.id)}
+                                disabled={confirmingAgendamento === agendamento.id}
+                                className="bg-green-600 hover:bg-green-700 text-white text-xs py-1 px-2 rounded"
+                                size="sm"
+                              >
+                                {confirmingAgendamento === agendamento.id ? 'Confirmando...' : 'Confirmar Visita'}
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
 
               <div className="bg-green-50 p-4 border-b border-gray-200 mt-8 border-t">
@@ -311,80 +353,129 @@ export default function Agendamentos() {
                   <p className="mt-2 text-gray-500">Nenhum agendamento foi confirmado até o momento</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Data/Hora
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Imóvel
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Cliente
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Ações
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {agendamentos.filter(a => a.confirmado).map((agendamento) => (
-                        <tr key={agendamento.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">{formatDate(agendamento.data)}</div>
-                            <div className="text-xs text-gray-500 flex items-center">
-                              <span className="inline-block h-2 w-2 rounded-full bg-green-400 mr-1"></span>
-                              Confirmado para visita
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex items-center">
-                              {agendamento.imovel.foto && (
-                                <div className="flex-shrink-0 h-10 w-10 mr-4">
-                                  <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" width={40} height={40} />
-                                </div>
-                              )}
-                              <div>
-                                <div className="text-sm font-medium text-gray-900">
-                                  {agendamento.imovel.endereco}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {agendamento.imovel.bairro} - {formatCurrency(agendamento.imovel.valor)}
+                <>
+                  <div className="md:hidden space-y-4 p-2">
+                    {agendamentos.filter(a => a.confirmado).map((agendamento) => (
+                      <div key={agendamento.id} className="bg-green-50 rounded-lg shadow p-4 flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="inline-block h-2 w-2 rounded-full bg-green-400 mr-1"></span>
+                          <span className="text-xs text-gray-500">Confirmado para visita</span>
+                        </div>
+                        <div className="text-sm font-medium text-gray-900">{formatDate(agendamento.data)}</div>
+                        <div className="flex items-center gap-3">
+                          {agendamento.imovel.foto && (
+                            <Image className="h-12 w-12 rounded-md object-cover" src={agendamento.imovel.foto} alt="" width={48} height={48} />
+                          )}
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{agendamento.imovel.endereco}</div>
+                            <div className="text-xs text-gray-500">{agendamento.imovel.bairro} - {formatCurrency(agendamento.imovel.valor)}</div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{agendamento.cliente.nome}</div>
+                          <div className="text-xs text-gray-500">{agendamento.cliente.email}</div>
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Confirmado
+                          </span>
+                          <Button
+                            disabled={true}
+                            className="bg-gray-200 text-gray-500 text-xs py-1 px-2 rounded cursor-not-allowed opacity-50"
+                            size="sm"
+                          >
+                            Confirmado
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="hidden md:block overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Data/Hora
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Imóvel
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Cliente
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Responsável
+                          </th>
+                          <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {todosAgendamentos.map((agendamento) => (
+                          <tr key={agendamento.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm font-medium text-gray-900">{formatDate(agendamento.data)}</div>
+                              <div className="text-xs text-gray-500 flex items-center">
+                                <span className="inline-block h-2 w-2 rounded-full bg-gray-400 mr-1"></span>
+                                Solicitado em {new Date(agendamento.createdAt).toLocaleDateString('pt-BR')}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center">
+                                {agendamento.imovel.foto && (
+                                  <div className="flex-shrink-0 h-10 w-10 mr-4">
+                                    <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" width={40} height={40} />
+                                  </div>
+                                )}
+                                <div>
+                                  <div className="text-sm font-medium text-gray-900">
+                                    {agendamento.imovel.endereco}
+                                  </div>
+                                  <div className="text-sm text-gray-500">
+                                    {agendamento.imovel.bairro} - {formatCurrency(agendamento.imovel.valor)}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="text-sm font-medium text-gray-900">{agendamento.cliente.nome}</div>
-                            <div className="text-sm text-gray-500">{agendamento.cliente.email}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                              <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                              </svg>
-                              Confirmado
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <Button
-                              disabled={true}
-                              className="bg-gray-200 text-gray-500 text-xs py-1 px-2 rounded cursor-not-allowed opacity-50"
-                              size="sm"
-                            >
-                              Confirmado
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm font-medium text-gray-900">{agendamento.cliente.nome}</div>
+                              <div className="text-sm text-gray-500">{agendamento.cliente.email}</div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm font-medium text-gray-900">
+                                {agendamento.admin ? agendamento.admin.nome : 'Não atribuído'}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                {agendamento.admin ? agendamento.admin.email : '-'}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {agendamento.confirmado ? (
+                                <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                  <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  Confirmado
+                                </span>
+                              ) : (
+                                <span className="px-2 py-1 inline-flex items-center text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                  <svg className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                  Pendente
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </div>
           )}

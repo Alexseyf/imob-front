@@ -56,7 +56,7 @@ export function CardImovel({ data }: { data: ImovelItf }) {
 
   if (!userType || userType === "CLIENTE") {
     return (
-      <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
+      <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 h-80">
         <div className="relative">
           <a>
             <Image
@@ -96,7 +96,7 @@ export function CardImovel({ data }: { data: ImovelItf }) {
   }
 
   return (
-    <div className={`w-full bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 mb-4 ${userType === "SUPORTE" ? "h-[24rem]" : "h-64"}`}>
+    <div className={`w-full bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 mb-4 ${userType === "SUPORTE" ? "h-[32,rem]" : "h-[26rem]"}`}> 
       <div className="flex flex-col md:flex-row h-full">
         <div className="md:w-1/4 relative h-48 md:h-full">
           <Image

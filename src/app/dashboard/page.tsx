@@ -201,7 +201,7 @@ export default function Dashboard() {
         </div>
         {clientReady && isSuporteRef.current() && (
           <div className="col-span-1 md:col-span-3 mt-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4">Análise de Dados</h2>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center md:text-left">Análise de Dados</h2>
             <div className="grid grid-cols-1 gap-8">
               <div className="bg-white p-6 rounded-lg shadow-md flex flex-col overflow-visible">
                 <h3 className="text-lg font-medium text-gray-700 mb-2">Distribuição de Imóveis por Bairro</h3>
