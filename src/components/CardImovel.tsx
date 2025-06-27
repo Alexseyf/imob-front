@@ -83,7 +83,7 @@ export function CardImovel({ data }: { data: ImovelItf }) {
             </h5>
           </a>
           <span className="mb-3 font-normal text-gray-700 dark:text-gray-400"></span>
-          <div className="absolute bottom-5 left-5 right-5">
+          <div className="w-full">
             <Link href={`/detalhes/${data.id}`}>
               <Button variant="outline" className="w-full" size="lg">
                 Detalhes
