@@ -58,8 +58,12 @@ export default function RegisterModal({ isOpen, onClose, tipoUsuario = 'CLIENTE'
       setEmail('');
       setSenha('');
       setConfirmSenha('');
-    } catch (err: any) {
-      setError(err.message || 'Ocorreu um erro ao cadastrar');
+    } catch (_err: unknown) {
+      if (_err instanceof Error) {
+        setError(_err.message);
+      } else {
+        setError('Ocorreu um erro ao cadastrar');
+      }
     } finally {
       setLoading(false);
     }

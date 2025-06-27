@@ -65,7 +65,7 @@ const PieGraph = () => {
         
         const data = await response.json();
         setImoveisPorBairro(data);
-      } catch (err) {
+      } catch (_err) {
         setError('Não foi possível carregar os dados do gráfico');
       } finally {
         setLoading(false);
