@@ -76,14 +76,14 @@ export default function Login() {
   };
 
   return (
-    <div className="login-container p-4 rounded shadow-md w-1/3 mx-auto mt-10">
-      <h1 className="text-2xl font-bold mb-4">Login</h1>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      <form className="space-y-4" onSubmit={handleSubmit}>
+    <div className="login-container p-4 rounded shadow-md w-full max-w-md mx-auto mt-10 bg-white sm:mt-16 sm:p-6">
+      <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
+      {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+      <form className="space-y-4" onSubmit={handleSubmit} autoComplete="on">
         <div className="form-group">
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 mb-1"
           >
             Email:
           </label>
@@ -96,13 +96,13 @@ export default function Login() {
             placeholder="Digite seu email"
             required
             autoFocus
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 text-base"
           />
         </div>
         <div className="form-group">
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-gray-700 mb-1"
           >
             Senha:
           </label>
@@ -114,13 +114,13 @@ export default function Login() {
             onChange={(e) => setSenha(e.target.value)}
             placeholder="Digite sua senha"
             required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500 text-base"
           />
         </div>
         <div className="flex justify-center">
           <button
             type="submit"
-            className="login-button bg-orange-100 text-black py-2 px-4 rounded hover:bg-orange-200"
+            className="login-button bg-orange-500 text-white py-3 px-6 rounded shadow hover:bg-orange-600 transition-colors w-full sm:w-auto"
           >
             Login
           </button>
@@ -129,18 +129,18 @@ export default function Login() {
           <button
             type="button"
             onClick={() => setIsRecoveryModalOpen(true)}
-            className="text-orange-500 hover:underline text-sm"
+            className="text-orange-500 hover:underline text-sm mt-2"
           >
             Esqueceu sua senha?
           </button>
         </div>
       </form>
-      <div className="mt-4 text-center">
+      <div className="mt-6 text-center">
         <p className="text-sm text-gray-600">
-          Não possui conta?{" "}
+          Não possui conta?{' '}
           <button
             onClick={() => setIsRegisterModalOpen(true)}
-            className="text-orange-500 hover:underline"
+            className="text-orange-500 hover:underline font-medium"
           >
             Cadastre-se
           </button>
