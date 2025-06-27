@@ -36,7 +36,7 @@ export default function PasswordRecoveryModal({ isOpen, onClose }: PasswordRecov
 
       toast.success('Código enviado para seu email');
       setStep(2);
-    } catch (_err) {
+    } catch (_) {
       toast.error('Erro ao enviar email de recuperação');
     } finally {
       setLoading(false);
@@ -74,7 +74,7 @@ export default function PasswordRecoveryModal({ isOpen, onClose }: PasswordRecov
 
       toast.success('Senha alterada com sucesso');
       onClose();
-    } catch (_err) {
+    } catch (_) {
       toast.error('Erro ao alterar senha');
     } finally {
       setLoading(false);

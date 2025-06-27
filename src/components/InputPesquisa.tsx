@@ -32,7 +32,7 @@ export function InputPesquisa() {
       }
       setFocus("termo");
       reset({ termo: "" });
-    } catch (_error) {
+    } catch (_) {
       toast.error("Erro ao buscar imóveis. Tente novamente.");
     }
   }

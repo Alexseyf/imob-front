@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 interface Cliente {
   id: number;
@@ -206,7 +207,7 @@ export function ClienteAgendamentos() {
                         <div className="flex items-center">
                           {agendamento.imovel.foto && (
                             <div className="flex-shrink-0 h-10 w-10 mr-4">
-                              <img
+                              <Image
                                 className="h-10 w-10 rounded-md object-cover"
                                 src={agendamento.imovel.foto}
                                 alt=""

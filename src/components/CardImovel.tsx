@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useState } from "react";
 import { toast } from "sonner";
 import ConfirmModal from "./ConfirmModal";
+import Image from "next/image";
 
 export function CardImovel({ data }: { data: ImovelItf }) {
   const { userType } = useAuthStore();
@@ -58,7 +59,7 @@ export function CardImovel({ data }: { data: ImovelItf }) {
       <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
         <div className="relative">
           <a>
-            <img
+            <Image
               className="rounded-t-lg w-full h-48 object-cover"
               src={data.foto || "/placeholder.svg"}
               alt=""
@@ -96,7 +97,7 @@ export function CardImovel({ data }: { data: ImovelItf }) {
     <div className={`w-full bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 mb-4 ${userType === "SUPORTE" ? "h-[24rem]" : "h-64"}`}>
       <div className="flex flex-col md:flex-row h-full">
         <div className="md:w-1/4 relative h-48 md:h-full">
-          <img
+          <Image
             className="w-full h-full object-cover rounded-t-lg md:rounded-l-lg md:rounded-t-none"
             src={data.foto || "/placeholder.svg"}
             alt="Imagem do imóvel"
