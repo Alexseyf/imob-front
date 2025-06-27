@@ -101,6 +101,8 @@ export default function DetalhesImovel() {
                 className="rounded-lg w-full h-120 object-cover mb-4 md:mb-0"
                 src={imovel.foto || "/placeholder.svg"}
                 alt="imagem do imóvel"
+                width={800}
+                height={400}
               />
             </div>
             <div className="md:w-5/12 md:pl-6 relative">

@@ -211,6 +211,8 @@ export function ClienteAgendamentos() {
                                 className="h-10 w-10 rounded-md object-cover"
                                 src={agendamento.imovel.foto}
                                 alt=""
+                                width={40}
+                                height={40}
                               />
                             </div>
                           )}

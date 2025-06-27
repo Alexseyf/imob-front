@@ -63,6 +63,8 @@ export function CardImovel({ data }: { data: ImovelItf }) {
               className="rounded-t-lg w-full h-48 object-cover"
               src={data.foto || "/placeholder.svg"}
               alt=""
+              width={400}
+              height={192}
             />
           </a>
           <div className="absolute top-2 right-2 bg-black text-white text-xs font-bold py-1 px-2 rounded">
@@ -101,6 +103,8 @@ export function CardImovel({ data }: { data: ImovelItf }) {
             className="w-full h-full object-cover rounded-t-lg md:rounded-l-lg md:rounded-t-none"
             src={data.foto || "/placeholder.svg"}
             alt="Imagem do imóvel"
+            width={400}
+            height={192}
           />
           <div className="absolute top-2 right-2 bg-black text-white text-xs font-bold py-1 px-2 rounded">
             R$:{" "}

@@ -75,7 +75,7 @@ const PieChart = () => {
         if (data && data.length > 0) {
           setSelectedAdmin(data[0]);
         }
-      } catch (_) {
+      } catch {
         setError('Não foi possível carregar os dados do gráfico');
       } finally {
         setLoading(false);

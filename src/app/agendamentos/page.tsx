@@ -50,6 +50,7 @@ export default function Agendamentos() {
   const [loading, setLoading] = useState(true);
   const [loadingTodosAgendamentos, setLoadingTodosAgendamentos] = useState(true);
   const [confirmingAgendamento, setConfirmingAgendamento] = useState<number | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   const checkAuthRef = useRef(checkAuth);
   const isAdminRef = useRef(isAdmin);
@@ -72,6 +73,10 @@ export default function Agendamentos() {
       fetchTodosAgendamentos();
     }
   }, [isAuthenticated, isAdmin, checkAuth, router]);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const fetchAgendamentos = async () => {
     try {
@@ -178,9 +183,11 @@ export default function Agendamentos() {
 
   return (
     <div className="container mx-auto p-4 sm:p-6 max-w-7xl">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">
-        {isAdmin() ? 'Gerenciamento de Agendamentos' : 'Meus Agendamentos'}
-      </h1>
+      {isClient && (
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">
+          {isAdmin() ? 'Gerenciamento de Agendamentos' : 'Meus Agendamentos'}
+        </h1>
+      )}
       
       {isAdmin() ? (
         <div className="space-y-8">
@@ -246,7 +253,7 @@ export default function Agendamentos() {
                             <div className="flex items-center">
                               {agendamento.imovel.foto && (
                                 <div className="flex-shrink-0 h-10 w-10 mr-4">
-                                  <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" />
+                                  <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" width={40} height={40} />
                                 </div>
                               )}
                               <div>
@@ -339,7 +346,7 @@ export default function Agendamentos() {
                             <div className="flex items-center">
                               {agendamento.imovel.foto && (
                                 <div className="flex-shrink-0 h-10 w-10 mr-4">
-                                  <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" />
+                                  <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" width={40} height={40} />
                                 </div>
                               )}
                               <div>
@@ -438,7 +445,7 @@ export default function Agendamentos() {
                           <div className="flex items-center">
                             {agendamento.imovel.foto && (
                               <div className="flex-shrink-0 h-10 w-10 mr-4">
-                                <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" />
+                                <Image className="h-10 w-10 rounded-md object-cover" src={agendamento.imovel.foto} alt="" width={40} height={40} />
                               </div>
                             )}
                             <div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -53,13 +53,7 @@ export default function CadastrarImovelModal({ isOpen, onClose }: CadastrarImove
     foto: ''
   });
 
-  useEffect(() => {
-    if (isOpen && token) {
-      fetchAdmins();
-    }
-  }, [isOpen, token]);
-
-  const fetchAdmins = async () => {
+  const fetchAdmins = useCallback(async () => {
     if (!token) return;
     
     try {
@@ -81,7 +75,13 @@ export default function CadastrarImovelModal({ isOpen, onClose }: CadastrarImove
       console.error('Erro ao buscar administradores:', error);
       toast.error('Não foi possível carregar a lista de administradores');
     }
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (isOpen && token) {
+      fetchAdmins();
+    }
+  }, [isOpen, token, fetchAdmins]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

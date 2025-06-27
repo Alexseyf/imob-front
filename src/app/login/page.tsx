@@ -70,7 +70,7 @@ export default function Login() {
           router.push('/');
         }
       }
-    } catch (_) {
+    } catch {
       setError('Email ou senha inválida');
     }
   };
