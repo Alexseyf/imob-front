@@ -67,7 +67,7 @@ export default function AgendarVisitaModal({ isOpen, onClose, imovelId }: Agenda
         throw new Error(responseData.erro || 'Falha ao agendar visita');
       }
       
-      toast.success('Visita agendada com sucesso!');
+      toast.success('Visita solicitada com sucesso! Aguarde a confirmação por e-mail.');
       onClose();
     } catch (error) {
       console.error('Erro ao agendar visita:', error);
